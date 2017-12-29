@@ -12,6 +12,7 @@
 
 (def width 200)
 (def height 100)
+(def ntimes 10)
 
 (defn color [{:keys [dir] :as ray} world]
   (if-let [rec (hit/hit world ray)]
@@ -20,6 +21,16 @@
           t (* 0.5 (+ (mat/select dir 1) 1.0))]
       (ops/+ (ops/* (- 1.0 t) [1.0 1.0 1.0])
              (ops/* t [0.5 0.7 1.0])))))
+
+(defn sample-colors [camera i j world]
+  (-> (reduce (fn [col _]
+                (let [u (/ (+ i (rand)) width)
+                      v (/ (+ j (rand)) height)
+                      ray (camera/ray-at camera u v)]
+                  (ops/+ col (color ray world))))
+              [0 0 0]
+              (range ntimes))
+      (ops// ntimes)))
 
 (defn write-pixel [data i j col]
   (let [pos (* (+ (* (- height j) width) i) 4)]
@@ -38,10 +49,8 @@
         camera (camera/make-camera)]
     (doseq [j (range (dec height) -1 -1)
             i (range width)
-            :let [u (/ i width)
-                  v (/ j height)
-                  r (camera/ray-at camera u v)]]
-      (write-pixel data i j (color r world)))
+            :let [col (sample-colors camera i j world)]]
+      (write-pixel data i j col))
     (.putImageData ctx pixels 0 0)))
 
 (events/listen js/window "load" main)
