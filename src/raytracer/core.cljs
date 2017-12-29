@@ -13,17 +13,20 @@
 (defn point-at [{:keys [origin dir]} t]
   (ops/+ origin (ops/* t dir)))
 
-(defn hits-sphere? [center radius {:keys [origin dir]}]
+(defn hit-sphere [center radius {:keys [origin dir]}]
   (let [oc (ops/- origin center)
         a (mat/dot dir dir)
         b (* 2.0 (mat/dot oc dir))
         c (- (mat/dot oc oc) (* radius radius))
         discriminant (- (* b b) (* 4 a c))]
-    (>= discriminant 0)))
+    (when (>= discriminant 0)
+      (/ (- (- b) (Math/sqrt discriminant))
+         (* 2.0 a)))))
 
 (defn color [{:keys [dir] :as r}]
-  (if (hits-sphere? [0 0 -1] 0.5 r)
-    [1 0 0]
+  (if-let [t (hit-sphere [0 0 -1] 0.5 r)]
+    (let [N (mat/normalise (ops/- (point-at r t) [0 0 -1]))]
+      (ops/* 0.5 (ops/+ N 1)))
     (let [dir (mat/normalise dir)
           t (* 0.5 (+ (mat/select dir 1) 1.0))]
       (ops/+ (ops/* (- 1.0 t) [1.0 1.0 1.0])
