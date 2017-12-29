@@ -6,8 +6,8 @@
 
 (enable-console-print!)
 
-(def width 500)
-(def height 250)
+(def width 200)
+(def height 100)
 
 (defn main []
   (let [canvas (dom/get-element :canvas)
