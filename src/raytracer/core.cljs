@@ -7,6 +7,7 @@
             [raytracer.hittable :as hit]
             [raytracer.lambertian :as lamb]
             [raytracer.material :as material]
+            [raytracer.metal :as metal]
             [raytracer.ray :as ray]
             [raytracer.sphere :as sphere]
             thinktopic.aljabr.core))
@@ -54,7 +55,13 @@
                     (lamb/->Lambertian [0.8 0.3 0.3]))
    (sphere/->Sphere [0 -100.5 -1]
                     100
-                    (lamb/->Lambertian [0.8 0.8 0.0]))])
+                    (lamb/->Lambertian [0.8 0.8 0.0]))
+   (sphere/->Sphere [1 0 -1]
+                    0.5
+                    (metal/->Metal [0.8 0.6 0.2] 1.0))
+   (sphere/->Sphere [-1 0 -1]
+                    0.5
+                    (metal/->Metal [0.8 0.8 0.8] 0.3))])
 
 (defn main []
   (let [canvas (dom/get-element :canvas)
