@@ -5,6 +5,7 @@
             [goog.events :as events]
             [raytracer.camera :as camera]
             [raytracer.hittable :as hit]
+            [raytracer.ray :as ray]
             [raytracer.sphere :as sphere]
             thinktopic.aljabr.core))
 
@@ -13,10 +14,19 @@
 (def width 200)
 (def height 100)
 (def ntimes 10)
+(defn random-in-unit-sphere []
+  (loop []
+    (let [p (ops/- (ops/* 2.0 [(rand) (rand) (rand)])
+                   [1 1 1])]
+      (if (< (mat/dot p p) 1)
+        p
+        (recur)))))
 
 (defn color [{:keys [dir] :as ray} world]
   (if-let [rec (hit/hit world ray)]
-    (ops/* 0.5 (ops/+ (:normal rec) 1))
+    (let [target (ops/+ (:p rec) (:normal rec) (random-in-unit-sphere))]
+      (ops/* 0.5 (color (ray/->Ray (:p rec) (ops/- target (:p rec)))
+                        world)))
     (let [dir (mat/normalise dir)
           t (* 0.5 (+ (mat/select dir 1) 1.0))]
       (ops/+ (ops/* (- 1.0 t) [1.0 1.0 1.0])
@@ -50,7 +60,7 @@
     (doseq [j (range (dec height) -1 -1)
             i (range width)
             :let [col (sample-colors camera i j world)]]
-      (write-pixel data i j col))
+      (write-pixel data i j (mat/sqrt col)))
     (.putImageData ctx pixels 0 0)))
 
 (events/listen js/window "load" main)
