@@ -4,7 +4,7 @@
             [raytracer.hittable :as hit]
             [raytracer.ray :as ray]))
 
-(defrecord Sphere [center radius]
+(defrecord Sphere [center radius material]
   hit/Hittable
   (hit* [this {:keys [origin dir] :as ray} t-min t-max record]
     (let [oc (ops/- origin center)
@@ -17,7 +17,10 @@
                   (when (< t-min t t-max)
                     (let [p (ray/point-at ray t)
                           normal (ops// (ops/- p center) radius)]
-                     (assoc record :t t :p p :normal normal))))]
+                     (assoc record
+                            :t t :p p
+                            :normal normal
+                            :material material))))]
           (or (update-record (/ (- (- b) (Math/sqrt discriminant))
                                 (* 2.0 a)))
               (update-record (/ (+ (- b) (Math/sqrt discriminant))

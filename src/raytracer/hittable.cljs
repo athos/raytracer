@@ -1,7 +1,7 @@
 (ns raytracer.hittable)
 
 (defn init-record []
-  {:t 0, :p [0 0 0], :normal [0 0 0]})
+  {:t 0, :p [0 0 0], :normal [0 0 0] :material nil})
 
 (defprotocol Hittable
   (hit* [this ray t-min t-max record]))
