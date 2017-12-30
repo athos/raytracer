@@ -8,7 +8,7 @@
 
 (defn hit
   ([hittable ray]
-   (hit hittable ray 0.0 ##Inf (init-record)))
+   (hit hittable ray 0.001 ##Inf (init-record)))
   ([hittable ray t-min t-max record]
    (hit* hittable ray t-min t-max record)))
 
