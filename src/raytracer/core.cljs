@@ -69,11 +69,16 @@
         ctx (.getContext canvas "2d")
         pixels (.createImageData ctx width height)
         data (.-data pixels)
-        camera (camera/make-camera [0 0 0]
-                                   [0 0 -1]
+        look-from [3 3 2]
+        look-at [0 0 -1]
+        dist-to-focus (mat/magnitude (ops/- look-from look-at))
+        camera (camera/make-camera look-from
+                                   look-at
                                    [0 1 0]
-                                   90
-                                   (/ width height))]
+                                   20
+                                   (/ width height)
+                                   2.0
+                                   dist-to-focus)]
     (doseq [j (range (dec height) -1 -1)
             i (range width)
             :let [col (sample-colors camera i j world)]]
