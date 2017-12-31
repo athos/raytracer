@@ -59,7 +59,7 @@
                     (lamb/->Lambertian [0.8 0.8 0.0]))
    (sphere/->Sphere [1 0 -1]
                     0.5
-                    (metal/->Metal [0.8 0.6 0.2] 0.0))
+                    (metal/->Metal [0.8 0.6 0.2] 0.3))
    (sphere/->Sphere [-1 0 -1]
                     0.5
                     (dielectric/->Dielectric 1.5))])
@@ -69,7 +69,11 @@
         ctx (.getContext canvas "2d")
         pixels (.createImageData ctx width height)
         data (.-data pixels)
-        camera (camera/make-camera)]
+        camera (camera/make-camera [0 0 0]
+                                   [0 0 -1]
+                                   [0 1 0]
+                                   90
+                                   (/ width height))]
     (doseq [j (range (dec height) -1 -1)
             i (range width)
             :let [col (sample-colors camera i j world)]]
