@@ -4,6 +4,7 @@
             [clojure.core.matrix.operators :as ops]
             [goog.events :as events]
             [raytracer.camera :as camera]
+            [raytracer.dielectric :as dielectric]
             [raytracer.hittable :as hit]
             [raytracer.lambertian :as lamb]
             [raytracer.material :as material]
@@ -52,16 +53,16 @@
 (def world
   [(sphere/->Sphere [0 0 -1]
                     0.5
-                    (lamb/->Lambertian [0.8 0.3 0.3]))
+                    (lamb/->Lambertian [0.1 0.2 0.5]))
    (sphere/->Sphere [0 -100.5 -1]
                     100
                     (lamb/->Lambertian [0.8 0.8 0.0]))
    (sphere/->Sphere [1 0 -1]
                     0.5
-                    (metal/->Metal [0.8 0.6 0.2] 1.0))
+                    (metal/->Metal [0.8 0.6 0.2] 0.0))
    (sphere/->Sphere [-1 0 -1]
                     0.5
-                    (metal/->Metal [0.8 0.8 0.8] 0.3))])
+                    (dielectric/->Dielectric 1.5))])
 
 (defn main []
   (let [canvas (dom/get-element :canvas)
